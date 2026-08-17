@@ -105,7 +105,7 @@ Ed25519 is used to sign requests so that the server can verify that the requeste
 
 X25519 is used to establish a shared secret between two identities.
 
-The shared secret is then processed through HKDF-SHA256 to derive the conversation encryption key.
+The shared secret is then processed through HKDF-SHA256 to derive the conversation encryption key. The client rejects non-contributory X25519 peer public keys instead of accepting a degenerate shared secret.
 
 Your public identity can be shared with other users.
 
@@ -131,7 +131,7 @@ The intended startup flow is simple.
 4. Enter the server port.
 5. Connect.
 6. Select or enter the public identity of a contact.
-7. Start communicating.
+7. Start communicating. Inside chat, type `/send` or `/file` when you want to send a file.
 
 The client does not require a complicated set of command-line arguments for normal use.
 
@@ -153,6 +153,8 @@ created_at
 ```
 
 The server does not need the plaintext message.
+
+Inside the chat, only the exact commands `/send` and `/file` start file sending. The client then asks for a local file path. Every other non-empty input line is treated as a normal encrypted text message. File sending is therefore part of the conversation flow rather than a separate main-menu action.
 
 When the recipient connects again and selects the same contact, the client requests the message history associated with those two identities.
 
@@ -275,7 +277,7 @@ SQLite remains responsible for locating files and maintaining metadata, while th
 
 ## 🔒 File Encryption
 
-Each file receives its own randomly generated file encryption key.
+Each file receives its own randomly generated file encryption key. The file key is wrapped with the conversation key, and the authenticated data binds the file ID, sender, recipient, nonce prefix, plaintext size, chunk size, and total chunk count. This prevents a server-side metadata change from being silently accepted for newly sent files. Legacy file-key metadata remains readable for backward compatibility.
 
 The file itself is encrypted chunk by chunk using:
 
@@ -344,7 +346,7 @@ Depending on the configured client storage layout, identity files are stored loc
 identities/
 ```
 
-These files contain the private cryptographic material required to represent the corresponding identity.
+These files contain the private cryptographic material required to represent the corresponding identity. On Unix-like systems, the client attempts to restrict the `identities/` directory to owner-only access and identity key files to mode `0600`. Other platforms rely on the operating system's normal account and filesystem permissions.
 
 The server does not store the user's private identity key.
 
