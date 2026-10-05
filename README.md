@@ -481,7 +481,7 @@ If financial sponsorship is not convenient, starring the repository, sharing it 
 ### ₿ Bitcoin
 
 ```text
-bc1qxqfhumpqtnxrznkx9r4xsp8m6zsedtgusjns7p
+bc1qwhzzk5tx07592vkf97rt8x8v0zdntad8lexnrgv3gdmecg8pfmhqzceedl
 ```
 
 ### ◆ Ethereum
